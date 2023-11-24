@@ -3,11 +3,13 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { loadableReady } from "@loadable/component";
-import { hydrate } from "react-dom";
-loadableReady(() => {
-  const rootElement = document.getElementById("root");
-  hydrate(<App />, rootElement);
-});
+import { hydrateRoot } from "react-dom";
+
+if (typeof window !== "undefined") {
+  loadableReady(() => {
+    hydrateRoot(document.getElementById("root"), <App />);
+  });
+}
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
