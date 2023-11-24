@@ -1,15 +1,15 @@
 // webpack.server.js
-const path = require('path');
-const nodeExternals = require('webpack-node-externals');
+const path = require("path");
+const nodeExternals = require("webpack-node-externals");
 
 module.exports = {
-  target: 'node',
-  mode: 'development',
+  target: "node",
+  mode: "development",
   externals: [nodeExternals()],
-  entry: './server/index.js',
+  entry: "./server/index.js",
   output: {
-    filename: 'server.js',
-    path: path.resolve(__dirname, 'build'),
+    filename: "server.js",
+    path: path.resolve(__dirname, "build"),
   },
   module: {
     rules: [
@@ -17,11 +17,11 @@ module.exports = {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader',
+          loader: "babel-loader",
           options: {
             presets: [
-              '@babel/preset-env',
-              '@babel/preset-react',
+              "@babel/preset-env",
+              ["@babel/preset-react", { runtime: "automatic" }],
             ],
           },
         },
@@ -29,6 +29,6 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: ['.js', '.jsx'],
+    extensions: [".js", ".jsx"],
   },
 };

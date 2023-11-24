@@ -6,13 +6,13 @@ import ReactDOMServer from "react-dom/server";
 import { ChunkExtractor, ChunkExtractorManager } from "@loadable/server";
 import App from "../src/App";
 
-const statsFile = path.resolve("./dist/client/loadable-stats.json");
+const statsFile = path.resolve("./build/loadable-stats.json");
 const extractor = new ChunkExtractor({ statsFile });
 
 const jsx = extractor.collectChunks(<App />);
 
 const app = express();
-const html = fs.readFileSync(path.resolve("./dist/client/index.html"), "utf-8");
+const html = fs.readFileSync(path.resolve("./build/index.html"), "utf-8");
 
 app.get("/", (req, res) => {
   const renderString = ReactDOMServer.renderToString(jsx);
@@ -20,14 +20,11 @@ app.get("/", (req, res) => {
   console.log(renderString);
   res.set("content-type", "text/html");
   res.send(
-    html.replace(
-      '<div id="root"></div>',
-      <div id="root">${renderString}</div>
-    )
+    html.replace('<div id="root"></div>', <div id="root">${renderString}</div>)
   );
 });
 
-app.use("/", express.static("dist/client"));
+app.use("/", express.static("build"));
 
 app.listen(3001, () => {
   console.log("Server is listening on port 3001");
