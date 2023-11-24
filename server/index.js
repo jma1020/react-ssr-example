@@ -2,6 +2,7 @@ import express from "express";
 import fs from "fs";
 import path from "path";
 import ReactDOMServer from "react-dom/server";
+import { StaticRouter } from "react-router-dom/server";
 
 import { ChunkExtractor, ChunkExtractorManager } from "@loadable/server";
 import App from "../src/App";
@@ -9,18 +10,25 @@ import App from "../src/App";
 const statsFile = path.resolve("./build/loadable-stats.json");
 const extractor = new ChunkExtractor({ statsFile });
 
-const jsx = extractor.collectChunks(<App />);
-
 const app = express();
 const html = fs.readFileSync(path.resolve("./build/index.html"), "utf-8");
 
-app.get("/", (req, res) => {
+app.get("*", (req, res, context) => {
+  const jsx = extractor.collectChunks(
+    <StaticRouter location={req.url}>
+      <App />
+    </StaticRouter>
+  );
+
   const renderString = ReactDOMServer.renderToString(jsx);
 
   console.log(renderString);
   res.set("content-type", "text/html");
   res.send(
-    html.replace('<div id="root"></div>', <div id="root">${renderString}</div>)
+    html.replace(
+      '<div id="root"></div>',
+      `<div id="root">${renderString}</div>`
+    )
   );
 });
 
